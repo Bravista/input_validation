@@ -15,12 +15,15 @@ class FormScreen extends StatelessWidget {
         padding: const EdgeInsets.all(32.0),
         child: Form(
           child: Column(children: [
+            const SizedBox(
+              height: 220,
+            ),
             TextFormField(
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 label: Text("Email"),
               ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autovalidateMode: AutovalidateMode.always,
               validator: validateEmail,
             ),
             const SizedBox(height: 8),
@@ -29,7 +32,7 @@ class FormScreen extends StatelessWidget {
                 border: OutlineInputBorder(),
                 label: Text("Passwort"),
               ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              autovalidateMode: AutovalidateMode.always,
               validator: validatePw,
             ),
             const SizedBox(height: 32),
@@ -45,11 +48,25 @@ class FormScreen extends StatelessWidget {
 
   String? validateEmail(String? input) {
     // TODO: implementiere hier die Logik, die im Task Sheet beschrieben ist
+    if (input == null || input.isEmpty) {
+      return "Email darf nicht leer sein";
+    } else if (input.length < 6) {
+      return "Email muss mindestens aus 6 Zeichen bestehen";
+    } else if (!input.contains("@")) {
+      return "Email muss @ enthalten";
+    } else if (!(input.endsWith(".com") || input.endsWith(".de"))) {
+      return "Email muss mit .com oder .de enden";
+    }
     return null;
   }
+}
 
-  String? validatePw(String? input) {
-    // TODO: implementiere hier die Logik, die im Task Sheet beschrieben ist
-    return null;
+String? validatePw(String? input) {
+  // TODO: implementiere hier die Logik, die im Task Sheet beschrieben ist
+  if (input == null || input.isEmpty) {
+    return "Passwort darf nicht leer sein";
+  } else if (input.length < 6 || input.length > 12) {
+    return "Passwort muss zwischen 6 und 12 Zeichen lang sein";
   }
+  return null;
 }
