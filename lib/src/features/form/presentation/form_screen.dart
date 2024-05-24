@@ -2,55 +2,79 @@ import 'package:flutter/material.dart';
 
 class FormScreen extends StatelessWidget {
   // Attribute
+  final emailController = TextEditingController();
+  final passwortController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
   // (keine)
 
   // Konstruktor
-  const FormScreen({super.key});
+  FormScreen({super.key});
 
   // Methoden
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Form(
-          child: Column(children: [
-            const SizedBox(
-              height: 220,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                label: Text("Email"),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Form(
+            key: formKey,
+            child: Column(children: [
+              const SizedBox(
+                height: 250,
               ),
-              autovalidateMode: AutovalidateMode.always,
-              validator: validateEmail,
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                label: Text("Passwort"),
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  label: Text("Email"),
+                ),
+                autovalidateMode: AutovalidateMode.always,
+                validator: validateEmail,
               ),
-              autovalidateMode: AutovalidateMode.always,
-              validator: validatePw,
-            ),
-            const SizedBox(height: 32),
-            FilledButton(
-              onPressed: () {},
-              child: const Text("Login"),
-            ),
-          ]),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: passwortController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  label: Text("Passwort"),
+                ),
+                autovalidateMode: AutovalidateMode.always,
+                validator: validatePw,
+              ),
+              const SizedBox(height: 32),
+              FilledButton(
+                onPressed: () {
+                  if (formKey.currentState?.validate() ?? false) {
+                    // Die Form ist valide
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Eingaben sind korrekt!'),
+                      ),
+                    );
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => FormScreen()));
+                  } else {
+                    // Die Form ist nicht valide
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Bitte korrigiere deine Eingaben.')),
+                    );
+                  }
+                },
+                child: const Text("Login"),
+              ),
+            ]),
+          ),
         ),
       ),
     );
   }
 
   String? validateEmail(String? input) {
-    // TODO: implementiere hier die Logik, die im Task Sheet beschrieben ist
     if (input == null || input.isEmpty) {
       return "Email darf nicht leer sein";
-    } else if (input.length < 6) {
+    } else if (input.length <= 5) {
       return "Email muss mindestens aus 6 Zeichen bestehen";
     } else if (!input.contains("@")) {
       return "Email muss @ enthalten";
@@ -62,7 +86,6 @@ class FormScreen extends StatelessWidget {
 }
 
 String? validatePw(String? input) {
-  // TODO: implementiere hier die Logik, die im Task Sheet beschrieben ist
   if (input == null || input.isEmpty) {
     return "Passwort darf nicht leer sein";
   } else if (input.length < 6 || input.length > 12) {
